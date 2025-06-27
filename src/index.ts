@@ -45,6 +45,21 @@ const appRouter = router({
 
     return {
       message: 'PDFs analyzed successfully!',
+      analysis: {
+        strengths: [
+          'Demonstrates strong experience in full-stack development, with a focus on both backend (Node.js, Express) and frontend (React) technologies.',
+          'Proficient in database management (MongoDB) and cloud platforms (AWS, Azure), aligning with modern development practices.',
+          'Proven ability to work with RESTful APIs, authentication (JWT), and deployment pipelines (CI/CD, Docker).',
+        ],
+        weaknesses: [
+          "The CV does not explicitly mention experience with GraphQL, which is a 'nice-to-have' skill in the job description.",
+          'While comfortable with JavaScript, specific advanced TypeScript experience for large-scale projects is not detailed.',
+          'Limited clear examples of leadership roles or extensive project management, if the role requires them beyond individual contributions.',
+        ],
+        alignmentScore: 85,
+        alignmentSummary:
+          'The candidate is a strong match for the Full-Stack Developer role, possessing robust technical skills across the stack, database management, and cloud deployment. Key strengths lie in Node.js, React, and MongoDB proficiency. While there are minor gaps in GraphQL and advanced TypeScript, their overall experience and ability to work with modern tools make them a highly suitable candidate.',
+      },
     };
   }),
 });
@@ -55,6 +70,8 @@ const parsePDF = async (filePath: string) => {
   const data = await pdfParse(dataBuffer);
   return data.text;
 };
+
+export type AppRouter = typeof appRouter;
 
 const app = express();
 const PORT = process.env.PORT || 3001;

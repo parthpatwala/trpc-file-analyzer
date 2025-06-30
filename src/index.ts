@@ -6,6 +6,7 @@ import fileUpload from 'express-fileupload';
 import fs from 'fs/promises';
 import pdfParse from 'pdf-parse';
 import { createContext, publicProcedure, router } from './trpc';
+import { analyzeWithGemini } from './gemini';
 
 config();
 
@@ -41,7 +42,9 @@ const appRouter = router({
     // parse pdf files
     const jobDescriptionText = await parsePDF(jobDescription.tempFilePath);
     const cvText = await parsePDF(cv.tempFilePath);
-    console.log(jobDescriptionText);
+
+    /** Enable below function after successfully running gemini flash 1.5 modal data from the provided host */
+    // const analysis = await analyzeWithGemini(jobDescriptionText, cvText);
 
     return {
       message: 'PDFs analyzed successfully!',

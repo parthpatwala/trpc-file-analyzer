@@ -2,6 +2,24 @@
 import { useActionState, useState } from 'react';
 // import { trpc } from '../utils/trpc';
 
+import {
+  Alert,
+  Box,
+  Button,
+  Card,
+  CardContent,
+  CircularProgress,
+  Container, // For file input label
+  FormControl,
+  Grid,
+  Input, // For file input
+  InputLabel,
+  List,
+  ListItem,
+  ListItemText,
+  Typography,
+} from '@mui/material';
+
 interface UploadState {
   message?: string;
   analysis?: {
@@ -82,52 +100,115 @@ const AnalyzeDocument = () => {
   const [uploadState, formAction, isPending] = useActionState(uploadAction, initialUploadState);
 
   return (
-    <div>
-      <header>
-        <h1>Document Analyzer</h1>
-      </header>
+    <Box sx={{ flexGrow: 1 }}>
+      {/* Header */}
+      <Typography variant='h6' component='div' sx={{ flexGrow: 1 }} align='center'>
+        Resume Analyzer
+      </Typography>
 
-      <form action={formAction}>
-        <div className='form-group'>
-          <label htmlFor='jobDescription'>Job Description:</label>
-          <input
-            type='file'
-            id='jobDescription'
-            name='jobDescription'
-            accept='application/pdf'
-            onChange={(e) => setJobDescriptionFile(e.target.files ? e.target.files[0] : null)}
-          />
-        </div>
-        <div>
-          <label htmlFor='cv'>CV:</label>
-          <input
-            type='file'
-            id='cv'
-            name='cv'
-            accept='application/pdf'
-            onChange={(e) => setCvFile(e.target.files ? e.target.files[0] : null)}
-          />
-        </div>
+      {/* Main Content Container */}
+      <Container maxWidth='md' sx={{ mt: 4, mb: 4 }}>
+        {/* File Upload Form */}
+        <Box component='form' action={formAction} sx={{ p: 3, border: '1px solid #ccc', borderRadius: 2 }}>
+          <Typography variant='h5' component='h2' gutterBottom align='center'>
+            Upload PDFs for Analysis
+          </Typography>
 
-        <button type='submit' disabled={isPending}>
-          {isPending ? 'Analyzing...' : 'Analyze Resumes'}
-        </button>
-      </form>
+          <Grid container spacing={3} alignItems='center'>
+            {/* Job Description File Input */}
+            <Grid>
+              <FormControl fullWidth margin='normal'>
+                <InputLabel shrink htmlFor='jobDescription'>
+                  Job Description PDF
+                </InputLabel>
+                <Input
+                  id='jobDescription'
+                  name='jobDescription'
+                  type='file'
+                  inputProps={{ accept: 'application/pdf' }}
+                  onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+                    setJobDescriptionFile(e.target.files ? e.target.files[0] : null)
+                  }
+                  required
+                />
+              </FormControl>
+            </Grid>
 
-      {uploadState.analysis && (
-        <div>
-          <h3>Analysis Result:</h3>
-          <div>{JSON.stringify(uploadState.analysis)}</div>
-        </div>
-      )}
+            {/* CV File Input */}
+            <Grid>
+              <FormControl fullWidth margin='normal'>
+                <InputLabel shrink htmlFor='cv'>
+                  Candidate CV PDF
+                </InputLabel>
+                <Input
+                  id='cv'
+                  name='cv'
+                  type='file'
+                  inputProps={{ accept: 'application/pdf' }}
+                  onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+                    setCvFile(e.target.files ? e.target.files[0] : null)
+                  }
+                  required
+                />
+              </FormControl>
+            </Grid>
 
-      {uploadState.error && (
-        <div style={{ color: 'red' }}>
-          <h3>Error during analysis:</h3>
-          <p>{uploadState.error}</p>
-        </div>
-      )}
-    </div>
+            {/* Error Messages */}
+            {uploadState.error && (
+              <Grid>
+                <Alert severity='error'>{uploadState.error}</Alert>
+              </Grid>
+            )}
+
+            {/* Submit Button */}
+            <Grid>
+              <Button type='submit' variant='contained' color='primary' fullWidth disabled={isPending} sx={{ mt: 2 }}>
+                {isPending ? <CircularProgress size={24} color='inherit' /> : 'Submit'}
+              </Button>
+            </Grid>
+          </Grid>
+        </Box>
+
+        {/* Analysis Results Display */}
+        {uploadState.message && !uploadState.error && (
+          <Card sx={{ mt: 4 }}>
+            <CardContent>
+              <Typography variant='h5' component='h3' gutterBottom>
+                Analysis Result:
+              </Typography>
+
+              {uploadState.analysis && (
+                <Box>
+                  <Typography variant='body2' sx={{ mb: 2 }}>
+                    **Summary:** {uploadState.analysis.alignmentSummary}
+                  </Typography>
+
+                  <Typography variant='h6'>Strengths:</Typography>
+                  <List dense>
+                    {uploadState.analysis.strengths.map((s, i) => (
+                      <ListItem key={i}>
+                        <ListItemText primary={s} />
+                      </ListItem>
+                    ))}
+                  </List>
+
+                  <Typography variant='h6' sx={{ mt: 2 }}>
+                    Weaknesses:
+                  </Typography>
+                  <List dense>
+                    {uploadState.analysis.weaknesses.map((w, i) => (
+                      <ListItem key={i}>
+                        <ListItemText primary={w} />
+                      </ListItem>
+                    ))}
+                  </List>
+                </Box>
+              )}
+            </CardContent>
+          </Card>
+        )}
+      </Container>
+    </Box>
   );
 };
 

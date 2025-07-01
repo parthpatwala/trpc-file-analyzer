@@ -71,7 +71,7 @@ export async function analyzeWithGemini(jobDescriptionText: string, cvText: stri
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        Authorization: `Bearer ${GEMINI_AUTH_TOKEN}`,
+        Authorization: `${GEMINI_AUTH_TOKEN}`,
       },
       body: JSON.stringify(requestBody), // Send the request body as JSON
     });
@@ -90,7 +90,14 @@ export async function analyzeWithGemini(jobDescriptionText: string, cvText: stri
     }
 
     // Attempt to parse the JSON output from Gemini
-    const parsedResult: GeminiAnalysisResult = JSON.parse(geminiOutputText);
+    const regex = /```json\s*([\s\S]*?)\s*```/;
+    const match = geminiOutputText.match(regex);
+    if (!match) {
+      console.error(`Could not extract JSON`);
+      throw new Error(`Could not extract JSON`);
+    }
+    const rawJsonString = match[1].trim();
+    const parsedResult: GeminiAnalysisResult = JSON.parse(rawJsonString);
     return parsedResult;
   } catch (error: any) {
     console.error('Error:', error);

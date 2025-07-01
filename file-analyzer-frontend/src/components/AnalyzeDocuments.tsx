@@ -174,13 +174,13 @@ const AnalyzeDocument = () => {
           <Card sx={{ mt: 4 }}>
             <CardContent>
               <Typography variant='h5' component='h3' gutterBottom>
-                Analysis Result:
+                Analysis Result ({uploadState.analysis?.alignmentScore} /100):
               </Typography>
 
               {uploadState.analysis && (
                 <Box>
                   <Typography variant='body2' sx={{ mb: 2 }}>
-                    **Summary:** {uploadState.analysis.alignmentSummary}
+                    {uploadState.analysis.alignmentSummary}
                   </Typography>
 
                   <Typography variant='h6'>Strengths:</Typography>
